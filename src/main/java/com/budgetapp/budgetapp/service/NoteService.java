@@ -11,7 +11,7 @@ public interface NoteService {
 
     void remove(int noteID);
 
-    List<Note> list();
+    List<Note> list(Integer userID);
 
     Note findByName(String username);
 

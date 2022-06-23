@@ -11,6 +11,8 @@ public class Log {
     @Column(length = 50)
     private Integer id;
     @Column(nullable = false)
+    private Boolean success;
+    @Column(nullable = false)
     private Date date;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -20,7 +22,8 @@ public class Log {
     public Log() {
     }
 
-    public Log(Date date) {
+    public Log(Boolean success, Date date) {
+        this.success = success;
         this.date = date;
     }
 
@@ -30,6 +33,14 @@ public class Log {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Boolean getSuccess() {
+        return success;
+    }
+
+    public void setSuccess(Boolean success) {
+        this.success = success;
     }
 
     public Date getDate() {

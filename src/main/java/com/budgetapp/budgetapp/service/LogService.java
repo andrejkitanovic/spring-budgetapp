@@ -11,7 +11,7 @@ public interface LogService {
 
     void remove(int logID);
 
-    List<Log> list();
+    List<Log> list(Integer userID);
 
     Log findByName(String username);
 

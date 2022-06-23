@@ -3,7 +3,6 @@ package com.budgetapp.budgetapp.controller;
 import com.budgetapp.budgetapp.domain.Outcome;
 import com.budgetapp.budgetapp.service.OutcomeService;
 import java.util.List;
-// import java.util.Set;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +18,8 @@ public class OutcomeController {
     }
 
     @GetMapping("/outcomes")
-    public List getOutcomes() {
-        return outcomeService.list();
+    public List getOutcomes(@RequestHeader("user") int userID) {
+        return outcomeService.list(userID);
     }
 
     @GetMapping("/outcomes/{id}")
@@ -36,10 +35,6 @@ public class OutcomeController {
     @PostMapping(value = "/outcomes", consumes = { "application/xml", "application/json" })
     @Transactional
     public ResponseEntity createOutcome(@RequestBody Outcome outcome) {
-        // Board board = boardService.find(boardID);
-        // Set<Outcome> boardOutcomes = board.getOutcomes();
-        // boardOutcomes.add(outcome);
-        // boardService.update(board);
         outcomeService.add(outcome);
 
         return new ResponseEntity(outcome, HttpStatus.OK);
@@ -47,26 +42,11 @@ public class OutcomeController {
 
     @DeleteMapping(value = "/outcomes/{id}")
     public ResponseEntity deleteOutcome(@PathVariable int id) {
+        Outcome outcome = outcomeService.find(id);
 
-        if (outcomeService.find(id) != null) {
-            // Board board = boardService.find(boardId);
-            // if (board != null) {
-            // Set<Outcome> boardOutcomes = board.getOutcomes();
-            // for (Outcome t : boardOutcomes) {
-            // if (t.getId().equals(outcomeId)) {
-            // boardOutcomes.remove(t);
-            // break;
-            // }
-            // }
-            // board.setOutcomes(boardOutcomes);
-            // boardService.update(board);
-
-            // outcomeService.remove(outcomeId);
-            // return new ResponseEntity(outcomeId, HttpStatus.OK);
-            // } else {
-            // return new ResponseEntity("No Board found for ID " + boardId,
-            // HttpStatus.NOT_FOUND);
-            // }
+        if (outcome != null) {
+            outcomeService.remove(id);
+            return new ResponseEntity(id, HttpStatus.OK);
         }
 
         return new ResponseEntity("No Outcome found for ID " + id, HttpStatus.NOT_FOUND);

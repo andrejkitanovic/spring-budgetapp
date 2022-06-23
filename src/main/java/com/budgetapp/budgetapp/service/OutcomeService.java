@@ -11,7 +11,7 @@ public interface OutcomeService {
 
     void remove(int incomeID);
 
-    List<Outcome> list();
+    List<Outcome> list(Integer userID);
 
     Outcome findByName(String username);
 

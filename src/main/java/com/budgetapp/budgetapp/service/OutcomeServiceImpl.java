@@ -1,14 +1,17 @@
 package com.budgetapp.budgetapp.service;
 
 import com.budgetapp.budgetapp.dao.OutcomeDao;
+import com.budgetapp.budgetapp.domain.User;
 import com.budgetapp.budgetapp.domain.Outcome;
+
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class OutcomeServiceImpl implements OutcomeService {
-    
+
     @Autowired
     private OutcomeDao dao;
 
@@ -28,30 +31,30 @@ public class OutcomeServiceImpl implements OutcomeService {
     }
 
     @Override
-    public List<Outcome> list() {
-//        List<Outcome> allOutcomes = dao.findAll();
-//        List<Outcome> userOutcomes = new ArrayList<>();
-//        System.out.println("userId: " + userID);
-//        System.out.println("allOutcomes: " + allOutcomes.toString());
-//        for (Outcome b : allOutcomes) {
-//            Set<User> outcomeUsers = b.getUsers();
-//            for (User u : outcomeUsers) {
-//                if(u.getId() == userID) {
-//                    userOutcomes.add(b);
-//                }
-//            }
-//        }
-        return dao.findAll();
+    public List<Outcome> list(Integer userID) {
+        List<Outcome> allOutcomes = dao.findAll();
+        List<Outcome> userOutcomes = new ArrayList<>();
+
+        for (Outcome outcome : allOutcomes) {
+            User user = outcome.getUser();
+
+            if (user.getId() == userID) {
+                userOutcomes.add(outcome);
+            }
+
+        }
+        return userOutcomes;
     }
 
     @Override
     public Outcome findByName(String username) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet."); // To change body of generated methods, choose
+                                                                       // Tools | Templates.
     }
 
     @Override
     public Outcome find(int outcomeID) {
         return dao.findById(outcomeID);
     }
-    
+
 }

@@ -2,6 +2,9 @@ package com.budgetapp.budgetapp.service;
 
 import com.budgetapp.budgetapp.dao.LogDao;
 import com.budgetapp.budgetapp.domain.Log;
+import com.budgetapp.budgetapp.domain.User;
+
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,20 +31,19 @@ public class LogServiceImpl implements LogService {
     }
 
     @Override
-    public List<Log> list() {
-//        List<Log> allLogs = dao.findAll();
-//        List<Log> userLogs = new ArrayList<>();
-//        System.out.println("userId: " + userID);
-//        System.out.println("allLogs: " + allLogs.toString());
-//        for (Log b : allLogs) {
-//            Set<User> incomeUsers = b.getUsers();
-//            for (User u : incomeUsers) {
-//                if(u.getId() == userID) {
-//                    userLogs.add(b);
-//                }
-//            }
-//        }
-        return dao.findAll();
+    public List<Log> list(Integer userID) {
+        List<Log> allLogs = dao.findAll();
+        List<Log> userLogs = new ArrayList<>();
+
+        for (Log log : allLogs) {
+            User user = log.getUser();
+
+            if (user.getId() == userID) {
+                userLogs.add(log);
+            }
+
+        }
+        return userLogs;
     }
 
     @Override

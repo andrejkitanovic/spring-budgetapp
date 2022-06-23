@@ -19,8 +19,8 @@ public class NoteController {
     }
 
     @GetMapping("/notes")
-    public List getNotes() {
-        return noteService.list();
+    public List getNotes(@RequestHeader("user") int userID) {
+        return noteService.list(userID);
     }
 
     @GetMapping("/notes/{id}")
@@ -36,10 +36,6 @@ public class NoteController {
     @PostMapping(value = "/notes", consumes = { "application/xml", "application/json" })
     @Transactional
     public ResponseEntity createNote(@RequestBody Note note) {
-        // Board board = boardService.find(boardID);
-        // Set<Note> boardNotes = board.getNotes();
-        // boardNotes.add(note);
-        // boardService.update(board);
         noteService.add(note);
 
         return new ResponseEntity(note, HttpStatus.OK);
@@ -47,26 +43,11 @@ public class NoteController {
 
     @DeleteMapping(value = "/notes/{id}")
     public ResponseEntity deleteNote(@PathVariable int id) {
+        Note note = noteService.find(id);
 
-        if (noteService.find(id) != null) {
-            // Board board = boardService.find(boardId);
-            // if (board != null) {
-            // Set<Note> boardNotes = board.getNotes();
-            // for (Note t : boardNotes) {
-            // if (t.getId().equals(noteId)) {
-            // boardNotes.remove(t);
-            // break;
-            // }
-            // }
-            // board.setNotes(boardNotes);
-            // boardService.update(board);
-
-            // noteService.remove(noteId);
-            // return new ResponseEntity(noteId, HttpStatus.OK);
-            // } else {
-            // return new ResponseEntity("No Board found for ID " + boardId,
-            // HttpStatus.NOT_FOUND);
-            // }
+        if (note != null) {
+            noteService.remove(id);
+            return new ResponseEntity(id, HttpStatus.OK);
         }
 
         return new ResponseEntity("No Note found for ID " + id, HttpStatus.NOT_FOUND);

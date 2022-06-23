@@ -1,7 +1,11 @@
 package com.budgetapp.budgetapp.controller;
 
+import com.budgetapp.budgetapp.domain.Log;
 import com.budgetapp.budgetapp.domain.User;
+import com.budgetapp.budgetapp.service.LogService;
 import com.budgetapp.budgetapp.service.UserService;
+
+import java.util.Date;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserService userService;
+    private final LogService logService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, LogService logService) {
         this.userService = userService;
+        this.logService = logService;
     }
 
     @GetMapping("/users")
@@ -38,36 +44,44 @@ public class UserController {
         return new ResponseEntity(user, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/users/register", consumes = {"application/xml", "application/json"})
+    @PostMapping(value = "/users/register", consumes = { "application/xml", "application/json" })
     @Transactional
     public ResponseEntity register(@RequestBody User user) {
         User foundUser = userService.findByEmail(user.getEmail());
-        
+
         if (foundUser == null) {
             userService.add(user);
             return new ResponseEntity(user, HttpStatus.OK);
         } else {
-            return new ResponseEntity("Email taken " + user.getEmail(), HttpStatus.CONFLICT);
+            return new ResponseEntity("Email already taken " + user.getEmail(), HttpStatus.CONFLICT);
         }
     }
 
-    @PostMapping(value = "/users/login", consumes = {"application/xml", "application/json"})
+    @PostMapping(value = "/users/login", consumes = { "application/xml", "application/json" })
     @Transactional
     public ResponseEntity login(@RequestBody User user) {
         User foundUser = userService.findByEmail(user.getEmail());
-        
+
+        Date now = new Date();
+
         if (foundUser == null) {
+            Log log = new Log(false, now);
+            logService.add(log);
             return new ResponseEntity("User not found ", HttpStatus.NOT_FOUND);
         } else {
-            if(foundUser.getPassword().equals(user.getPassword())) {
+            if (foundUser.getPassword().equals(user.getPassword())) {
+                Log log = new Log(true, now);
+                logService.add(log);
                 return new ResponseEntity(foundUser, HttpStatus.OK);
             } else {
+                Log log = new Log(false, now);
+                logService.add(log);
                 return new ResponseEntity("Incorrect password ", HttpStatus.UNAUTHORIZED);
             }
         }
     }
-    
-    @PutMapping(value = "/users/me", consumes = {"application/xml", "application/json"})
+
+    @PutMapping(value = "/users/me", consumes = { "application/xml", "application/json" })
     @Transactional
     public ResponseEntity updateUser(@RequestHeader("user-id") int userID, @RequestBody User user) {
         User newUser = userService.find(userID);
@@ -75,7 +89,7 @@ public class UserController {
         if (null == newUser) {
             return new ResponseEntity("No User found for ID " + userID, HttpStatus.NOT_FOUND);
         }
-        
+
         newUser.setPassword(user.getPassword());
         return new ResponseEntity(newUser, HttpStatus.OK);
     }

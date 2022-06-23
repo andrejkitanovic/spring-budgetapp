@@ -1,12 +1,7 @@
 package com.budgetapp.budgetapp.controller;
 
-import com.budgetapp.budgetapp.domain.Log;
 import com.budgetapp.budgetapp.service.LogService;
 import java.util.List;
-// import java.util.Set;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,19 +14,7 @@ public class LogController {
     }
 
     @GetMapping("/logs")
-    public List getLogs() {
-        return logService.list();
-    }
-
-    @PostMapping(value = "/logs", consumes = { "application/xml", "application/json" })
-    @Transactional
-    public ResponseEntity createLog(@RequestBody Log log) {
-        // Board board = boardService.find(boardID);
-        // Set<Log> boardLogs = board.getLogs();
-        // boardLogs.add(log);
-        // boardService.update(board);
-        logService.add(log);
-
-        return new ResponseEntity(log, HttpStatus.OK);
+    public List getLogs(@RequestHeader("user") int userID) {
+        return logService.list(userID);
     }
 }

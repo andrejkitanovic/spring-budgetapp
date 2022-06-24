@@ -1,7 +1,10 @@
 package com.budgetapp.budgetapp.controller;
 
+import com.budgetapp.budgetapp.domain.User;
 import com.budgetapp.budgetapp.domain.Outcome;
 import com.budgetapp.budgetapp.service.OutcomeService;
+import com.budgetapp.budgetapp.service.UserService;
+
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,10 +14,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class OutcomeController {
 
+    private final UserService userService;
     private final OutcomeService outcomeService;
 
-    public OutcomeController(OutcomeService outcomeService) {
+    public OutcomeController(OutcomeService outcomeService, UserService userService) {
         this.outcomeService = outcomeService;
+        this.userService = userService;
     }
 
     @GetMapping("/outcomes")
@@ -34,7 +39,9 @@ public class OutcomeController {
 
     @PostMapping(value = "/outcomes", consumes = { "application/xml", "application/json" })
     @Transactional
-    public ResponseEntity createOutcome(@RequestBody Outcome outcome) {
+    public ResponseEntity createOutcome(@RequestBody Outcome outcome, @RequestHeader("user") int userID) {
+        User user = userService.find(userID);
+        outcome.setUser(user);
         outcomeService.add(outcome);
 
         return new ResponseEntity(outcome, HttpStatus.OK);

@@ -65,16 +65,14 @@ public class UserController {
         Date now = new Date();
 
         if (foundUser == null) {
-            Log log = new Log(false, now);
-            logService.add(log);
             return new ResponseEntity("User not found ", HttpStatus.NOT_FOUND);
         } else {
             if (foundUser.getPassword().equals(user.getPassword())) {
-                Log log = new Log(true, now);
+                Log log = new Log(true, now, foundUser);
                 logService.add(log);
                 return new ResponseEntity(foundUser, HttpStatus.OK);
             } else {
-                Log log = new Log(false, now);
+                Log log = new Log(false, now, foundUser);
                 logService.add(log);
                 return new ResponseEntity("Incorrect password ", HttpStatus.UNAUTHORIZED);
             }

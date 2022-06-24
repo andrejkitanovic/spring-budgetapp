@@ -22,9 +22,10 @@ public class Log {
     public Log() {
     }
 
-    public Log(Boolean success, Date date) {
+    public Log(Boolean success, Date date, User user) {
         this.success = success;
         this.date = date;
+        this.user = user;
     }
 
     public Integer getId() {

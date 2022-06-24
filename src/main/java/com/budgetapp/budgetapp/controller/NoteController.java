@@ -1,9 +1,10 @@
 package com.budgetapp.budgetapp.controller;
 
+import com.budgetapp.budgetapp.domain.User;
 import com.budgetapp.budgetapp.domain.Note;
 import com.budgetapp.budgetapp.service.NoteService;
+import com.budgetapp.budgetapp.service.UserService;
 import java.util.List;
-// import java.util.Set;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,9 +14,11 @@ import org.springframework.web.bind.annotation.*;
 public class NoteController {
 
     private final NoteService noteService;
+    private final UserService userService;
 
-    public NoteController(NoteService noteService) {
+    public NoteController(NoteService noteService, UserService userService) {
         this.noteService = noteService;
+        this.userService = userService;
     }
 
     @GetMapping("/notes")
@@ -35,7 +38,11 @@ public class NoteController {
 
     @PostMapping(value = "/notes", consumes = { "application/xml", "application/json" })
     @Transactional
-    public ResponseEntity createNote(@RequestBody Note note) {
+    public ResponseEntity createNote(@RequestBody Note note, @RequestHeader("user") int userID) {
+        // Note note = noteService.add(note);
+
+        User user = userService.find(userID);
+        note.setUser(user);
         noteService.add(note);
 
         return new ResponseEntity(note, HttpStatus.OK);
